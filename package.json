@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npx tsc",
     "start": "nodemon --exec ts-node src/app.ts",
-    "start:prod": "NODE_ENV=prod && pm2 delete fms; pm2 start --name fms \"npx ts-node --transpile-only src/app.ts\"",
+    "start:prod": "NODE_ENV=prod && pm2 delete pms; pm2 start --name pms \"npx ts-node --transpile-only src/app.ts\"",
     "migrate-and-start": "npm run build && npx typeorm-ts-node-commonjs migration:run -d ./src/config/db/index.ts && npm run start",
     "migration:generate": "cross-var npx typeorm-ts-node-commonjs migration:generate ./src/config/db/migrations/$npm_config_name -d ./src/config/db/index.ts",
     "migration:run": "npm run build && npx typeorm-ts-node-commonjs migration:run --dataSource ./src/config/db/index.ts",
