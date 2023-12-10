@@ -1,0 +1,44 @@
+version: "3.8"
+
+# Define the services that make up the application
+services:
+  # PostgreSQL database service
+  barista-db:
+    # Use the "barista-postgres-db" image
+    image: barista-postgres-db
+    # Build configuration using a custom Dockerfile
+    build:
+      context: .
+      dockerfile: dockerfile.postgres
+    # Always restart this service if it stops
+    restart: always
+    # Map host machine port 5434 to container port 5432
+    ports:
+      - "5434:5432"
+    # Use a named volume "db" to persist PostgreSQL data
+    volumes:
+      - db:/var/lib/postgresql/data
+
+  # Backend service
+  barista-be:
+    # Use the "barista-be" image
+    image: barista-be
+    # Build configuration using a custom Dockerfile
+    build:
+      context: .
+      dockerfile: dockerfile.be
+    # This service depends on "barista-db" and will wait for it to be up
+    depends_on:
+      - barista-db
+    # Map host machine port 3000 to container port 3000
+    ports:
+      - "3000:3000"
+    # Mount the current directory as a volume inside the container
+    volumes:
+      - ./:/app
+    # You can specify a command to run when the container starts here
+    #command: npm run schema:sync
+
+    # Define a named volume "db" to persist database data
+volumes:
+  db:
