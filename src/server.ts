@@ -65,19 +65,19 @@ export class Server {
   }
 
   public start() {
-    if (config.NODE_ENV == "prod") {
-      const credentials = {
-        key: fs.readFileSync("/root/certs/privkey.pem", "utf-8"),
-        cert: fs.readFileSync("/root/certs/cert.pem", "utf-8"),
-      };
+    // if (config.NODE_ENV == "prod") {
+    //   const credentials = {
+    //     key: fs.readFileSync("/root/certs/privkey.pem", "utf-8"),
+    //     cert: fs.readFileSync("/root/certs/cert.pem", "utf-8"),
+    //   };
 
-      const httpsServer = https.createServer(credentials, this.express);
-      httpsServer.listen(port, () => {
-        console.log(
-          `Server started at https://localhost:${port} on ${config.NODE_ENV}`
-        );
-      });
-    }
+    //   const httpsServer = https.createServer(credentials, this.express);
+    //   httpsServer.listen(port, () => {
+    //     console.log(
+    //       `Server started at https://localhost:${port} on ${config.NODE_ENV}`
+    //     );
+    //   });
+    // }
 
     this.express.listen(port, () => {
       console.log(
