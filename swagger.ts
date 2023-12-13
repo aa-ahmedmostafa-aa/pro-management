@@ -390,7 +390,7 @@ export const swaggerDocument = {
             name: "groups",
             in: "query",
             type: "array",
-            description: "Write 1 for group admin, 2 for system user",
+            description: "Write 1 for group manager, 2 for system employee",
             items: {
               type: "integer",
             },
@@ -641,6 +641,225 @@ export const swaggerDocument = {
       },
     },
 
+    "/api/v1/Project": {
+      post: {
+        tags: ["Project"],
+        summary: "create project by manager",
+        parameters: [
+          {
+            in: "body",
+            name: "createProject",
+            schema: {
+              type: "object",
+              properties: {
+                title: {
+                  type: "string",
+                },
+                description: {
+                  type: "string",
+                },
+              },
+            },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "ok",
+          },
+          "400": {
+            description: "bad request",
+          },
+          "401": {
+            description: "Un Authorized",
+          },
+          "403": {
+            description: "Forbidden",
+          },
+
+          "404": {
+            description: "Not Found",
+          },
+          "500": {
+            description: "internal server error",
+          },
+        },
+      },
+    },
+
+    "/api/v1/Project/{id}": {
+      get: {
+        tags: ["Project"],
+        summary: "get project by id",
+        parameters: [
+          {
+            name: "id",
+            required: true,
+            in: "path",
+            type: "integer",
+          },
+        ],
+        responses: {
+          "200": {
+            description: "ok",
+          },
+          "400": {
+            description: "bad request",
+          },
+          "401": {
+            description: "Un Authorized",
+          },
+          "403": {
+            description: "Forbidden",
+          },
+
+          "404": {
+            description: "Not Found",
+          },
+          "500": {
+            description: "internal server error",
+          },
+        },
+      },
+      put: {
+        tags: ["Project"],
+        summary: "update project by manager",
+        parameters: [
+          {
+            name: "id",
+            required: true,
+            in: "path",
+            type: "integer",
+          },
+          {
+            in: "body",
+            name: "updateProject",
+            schema: {
+              type: "object",
+              properties: {
+                title: {
+                  type: "string",
+                },
+                description: {
+                  type: "string",
+                },
+              },
+            },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "ok",
+          },
+          "400": {
+            description: "bad request",
+          },
+          "401": {
+            description: "Un Authorized",
+          },
+          "403": {
+            description: "Forbidden",
+          },
+
+          "404": {
+            description: "Not Found",
+          },
+          "500": {
+            description: "internal server error",
+          },
+        },
+      },
+      delete: {
+        tags: ["Project"],
+        summary: "delete project by id",
+        parameters: [
+          {
+            name: "id",
+            required: true,
+            in: "path",
+            type: "integer",
+          },
+        ],
+        responses: {
+          "200": {
+            description: "ok",
+          },
+          "400": {
+            description: "bad request",
+          },
+          "401": {
+            description: "Un Authorized",
+          },
+          "403": {
+            description: "Forbidden",
+          },
+
+          "404": {
+            description: "Not Found",
+          },
+          "500": {
+            description: "internal server error",
+          },
+        },
+      },
+    },
+
+    "/api/v1/Project/manager": {
+      get: {
+        tags: ["Project"],
+        summary: "get my projects",
+        responses: {
+          "200": {
+            description: "ok",
+          },
+          "400": {
+            description: "bad request",
+          },
+          "401": {
+            description: "Un Authorized",
+          },
+          "403": {
+            description: "Forbidden",
+          },
+
+          "404": {
+            description: "Not Found",
+          },
+          "500": {
+            description: "internal server error",
+          },
+        },
+      },
+    },
+
+    "/api/v1/Project/": {
+      get: {
+        tags: ["Project"],
+        summary: "get all projects in system",
+        responses: {
+          "200": {
+            description: "ok",
+          },
+          "400": {
+            description: "bad request",
+          },
+          "401": {
+            description: "Un Authorized",
+          },
+          "403": {
+            description: "Forbidden",
+          },
+
+          "404": {
+            description: "Not Found",
+          },
+          "500": {
+            description: "internal server error",
+          },
+        },
+      },
+    },
+
+    
   },
   securityDefinitions: {
     bearerAuth: {

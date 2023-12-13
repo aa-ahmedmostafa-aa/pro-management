@@ -1,3 +1,4 @@
+import { Project } from "../../project/project.entity";
 import { UserGroup } from "../../user-group/user-group.entity";
 import {
   Entity,
@@ -6,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToMany,
 } from "typeorm";
 
 @Entity("users")
@@ -31,11 +33,6 @@ export class User {
   @Column()
   phoneNumber!: string;
 
-  @ManyToOne(() => UserGroup, (userGroup) => userGroup.users, {
-    cascade: true,
-  })
-  group!: UserGroup;
-
   @Column({ nullable: true })
   verificationCode!: string;
 
@@ -52,4 +49,14 @@ export class User {
   @Column()
   @UpdateDateColumn()
   modificationDate!: Date;
+
+  @ManyToOne(() => UserGroup, (userGroup) => userGroup.users, {
+    cascade: true,
+  })
+  group!: UserGroup;
+
+  @OneToMany(() => Project, (Project) => Project.admin, {
+    onDelete: "CASCADE",
+  })
+  project!: Project;
 }
