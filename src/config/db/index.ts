@@ -23,7 +23,7 @@ const connectOptions: DataSourceOptions = {
       }),
   entities: ["src/domains/**/*.entity{.ts,.js}"],
   migrations: ["src/config/db/migrations/*.ts"],
-  synchronize: false,
+  synchronize: true,
 };
 
 export const DB = new DataSource(connectOptions);
