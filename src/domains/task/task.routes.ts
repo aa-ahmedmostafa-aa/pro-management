@@ -45,9 +45,17 @@ class TaskRouter implements IRouterBase<TaskController> {
 
     this.router.get(
       "/",
-      authenticationAndAuthorizationMiddleware([UserRoles.Manager.name]),
+      authenticationAndAuthorizationMiddleware([UserRoles.Employee.name]),
       async (req: Request, res: Response) => {
         this.controller.getAllMyTasks(req, res);
+      }
+    );
+
+    this.router.put(
+      "/:id/change-status",
+      authenticationAndAuthorizationMiddleware([UserRoles.Employee.name]),
+      async (req: Request, res: Response) => {
+        this.controller.changeTaskStatus(req, res);
       }
     );
 

@@ -911,6 +911,18 @@ export const swaggerDocument = {
       get: {
         tags: ["Task"],
         summary: "get all my assigned Tasks",
+        parameters: [
+          {
+            name: "status",
+            description: "values: ToDo, InProgress, Done",
+            in: "query",
+            schema: {
+              type: "string",
+              enum: ["ToDo", "InProgress", "Done"],
+            },
+          },
+        ],
+
         responses: {
           "200": {
             description: "ok",
@@ -1054,6 +1066,54 @@ export const swaggerDocument = {
       },
     },
 
+    "/api/v1/Task/{id}/change-status": {
+      put: {
+        tags: ["Task"],
+        summary: "change status for Task by employee",
+        parameters: [
+          {
+            name: "id",
+            required: true,
+            in: "path",
+            type: "integer",
+          },
+          {
+            in: "body",
+            name: "changeStatus",
+            schema: {
+              type: "object",
+              properties: {
+                status: {
+                  type: "string",
+                },
+              },
+            },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "ok",
+          },
+          "400": {
+            description: "bad request",
+          },
+          "401": {
+            description: "Un Authorized",
+          },
+          "403": {
+            description: "Forbidden",
+          },
+
+          "404": {
+            description: "Not Found",
+          },
+          "500": {
+            description: "internal server error",
+          },
+        },
+      },
+    },
+
     "/api/v1/Task/project/{id}": {
       get: {
         tags: ["Task"],
@@ -1090,8 +1150,6 @@ export const swaggerDocument = {
         },
       },
     },
-
-    
   },
   securityDefinitions: {
     bearerAuth: {

@@ -48,4 +48,25 @@ export class TaskValidator {
 
     return validationResult;
   }
+
+  public static validateChangeStatus(req: Request) {
+    const validationResult = {
+      status: true,
+      error: null,
+      errorMessage: "Error on validating your request",
+    };
+    const validationRules = {
+      status: "required|in:ToDo,InProgress,Done",
+    };
+    RequestBodyValidator.validateWithRules(
+      req.body,
+      validationRules,
+      (err: any, status: boolean) => {
+        validationResult.error = err;
+        validationResult.status = status;
+      }
+    );
+
+    return validationResult;
+  }
 }

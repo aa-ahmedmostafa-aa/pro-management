@@ -1,3 +1,4 @@
+import { TaskStatus } from "../../shared/enums/task-status";
 import { IGenericRepository } from "../../shared/repository/abstractions/generic-repository";
 import { GenericRepository } from "../../shared/repository/implementations/generic-repository";
 import { Project } from "../project/project.entity";
@@ -36,9 +37,29 @@ export class TaskService {
     return await this.taskRepository.update(task);
   }
 
+  async changeStatusTask(task: Task, status: TaskStatus) {
+    task.status = status;
+    return await this.taskRepository.update(task);
+  }
+
   async getTaskById(id: number) {
     return await this.taskRepository.findOne({
       where: { id },
+      relations: {
+        employee: true,
+        project: true,
+      },
+    });
+  }
+
+  async getTaskByIdAndUserId(id: number, userId: number) {
+    return await this.taskRepository.findOne({
+      where: {
+        id,
+        employee: {
+          id: userId,
+        },
+      },
       relations: {
         employee: true,
         project: true,
@@ -73,9 +94,10 @@ export class TaskService {
     });
   }
 
-  async getAllMyTasks(employeeId: number) {
+  async getAllMyTasks(employeeId: number, status: string) {
     return await this.taskRepository.find({
       where: {
+        status,
         employee: {
           id: employeeId,
         },

@@ -107,7 +107,11 @@ export class TaskController {
   async getAllMyTasks(req: Request, res: Response) {
     try {
       const user = res.locals.user as IUser;
-      const tasksInDb = await this.taskService.getAllMyTasks(user.userId);
+      const status = req.query.status as string;
+      const tasksInDb = await this.taskService.getAllMyTasks(
+        user.userId,
+        status
+      );
       return new ResponseHandlingService(res, tasksInDb, StatusCodes.OK);
     } catch (error: any) {
       return new ResponseHandlingService(
@@ -142,6 +146,47 @@ export class TaskController {
       };
 
       const updatedTask = await this.taskService.updateTask(taskDto);
+      return new ResponseHandlingService(res, updatedTask, StatusCodes.OK);
+    } catch (error: any) {
+      return new ResponseHandlingService(
+        res,
+        new ErrorResponse(error.any, StatusCodes.InternalServerError, error),
+        StatusCodes.InternalServerError
+      );
+    }
+  }
+
+  async changeTaskStatus(req: Request, res: Response) {
+    try {
+      const validationResult = TaskValidator.validateChangeStatus(req);
+      if (!validationResult.status) {
+        return new ResponseHandlingService(
+          res,
+          new ErrorResponse(
+            validationResult.errorMessage,
+            StatusCodes.BadRequest,
+            validationResult.error
+          ),
+          StatusCodes.BadRequest
+        );
+      }
+      const user = res.locals.user as IUser;
+      const task = await this.taskService.getTaskByIdAndUserId(
+        parseInt(req.params.id),
+        user.userId
+      );
+      if (!task) {
+        return new ResponseHandlingService(
+          res,
+          new ErrorResponse(
+            `Can not found task ID: ${req.params.id}`,
+            StatusCodes.NotFound
+          ),
+          StatusCodes.NotFound
+        );
+      }
+      const { status } = req.body;
+      const updatedTask = await this.taskService.changeStatusTask(task, status);
       return new ResponseHandlingService(res, updatedTask, StatusCodes.OK);
     } catch (error: any) {
       return new ResponseHandlingService(
