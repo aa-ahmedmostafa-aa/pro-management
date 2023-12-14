@@ -1,7 +1,16 @@
-import { Entity, Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
-import { User } from '../users/entities/user.entity';
+import {
+  Entity,
+  Column,
+  CreateDateColumn,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  OneToMany,
+} from "typeorm";
+import { User } from "../users/entities/user.entity";
+import { Task } from "../task/task.entity";
 
-@Entity('project')
+@Entity("project")
 export class Project {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -24,5 +33,9 @@ export class Project {
     cascade: true,
   })
   admin!: User;
-}
 
+  @OneToMany(() => Task, (task) => task.project, {
+    cascade: true,
+  })
+  task!: Task;
+}

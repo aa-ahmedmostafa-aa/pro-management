@@ -1,4 +1,5 @@
 import { Project } from "../../project/project.entity";
+import { Task } from "../../task/task.entity";
 import { UserGroup } from "../../user-group/user-group.entity";
 import {
   Entity,
@@ -55,8 +56,13 @@ export class User {
   })
   group!: UserGroup;
 
-  @OneToMany(() => Project, (Project) => Project.admin, {
+  @OneToMany(() => Project, (project) => project.admin, {
     onDelete: "CASCADE",
   })
   project!: Project;
+
+  @OneToMany(() => Task, (task) => task.employee, {
+    onDelete: "CASCADE",
+  })
+  task!: Task;
 }

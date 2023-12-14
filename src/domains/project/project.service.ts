@@ -26,11 +26,17 @@ export class ProjectService {
     if (projectDto.projectId) project.id = projectDto.projectId;
     project.title = projectDto.title;
     project.description = projectDto.description;
-    return await this.projectRepository.create(project);
+    return await this.projectRepository.update(project);
   }
 
   async getProjectById(id: number) {
-    return await this.projectRepository.findOne({ where: { id } });
+    return await this.projectRepository.findOne({
+      where: { id },
+      relations: {
+        task: true,
+        admin: true,
+      },
+    });
   }
 
   async deleteProject(id: number) {
@@ -41,6 +47,9 @@ export class ProjectService {
     return await this.projectRepository.find({
       where: {
         admin: { id: adminId },
+      },
+      relations: {
+        task: true,
       },
       order: { creationDate: "DESC" },
     });

@@ -37,7 +37,7 @@ export const initDB = async () => {
 export const initDBWithData = async () => {
   const db = !DB.isInitialized ? await DB.initialize() : DB;
 
-  await clearDB();
+  // await clearDB();
   const userRolesKeys = Object.keys(UserRoles);
 
   for (const role in UserRoles) {

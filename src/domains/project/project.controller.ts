@@ -34,7 +34,6 @@ export class ProjectController {
         description: req.body.description,
         adminId: user.userId,
       };
-      console.log(projectDto)
       const newProject = await this.projectService.createProject(projectDto);
       return new ResponseHandlingService(res, newProject, StatusCodes.Created);
     } catch (error: any) {
@@ -64,7 +63,6 @@ export class ProjectController {
   async getMyProjects(req: Request, res: Response) {
     try {
       const user = res.locals.user as IUser;
-      console.log("minaaaaaaa")
       const projectsInDb = await this.projectService.getMyProjects(user.userId);
       return new ResponseHandlingService(res, projectsInDb, StatusCodes.OK);
     } catch (error: any) {

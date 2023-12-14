@@ -4,6 +4,7 @@ import { Request, Response, Router } from "express";
 import { miscRoutes } from "../domains/misc/index";
 import { usersRoutes } from "../domains/users/users.routes";
 import { projectRoutes } from "../domains/project/project.routes";
+import { taskRoutes } from "../domains/task/task.routes";
 
 
 export class ApplicationRouter {
@@ -20,6 +21,7 @@ export class ApplicationRouter {
     this.router.use(`${this.baseUrl}/UserGroups`, userGroupsRoutes);
     this.router.use(`${this.baseUrl}/Users`, usersRoutes);
     this.router.use(`${this.baseUrl}/Project`, projectRoutes);
+    this.router.use(`${this.baseUrl}/Task`, taskRoutes);
 
     
     return this.router;
