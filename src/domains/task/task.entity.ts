@@ -23,9 +23,8 @@ export class Task {
 
   @Column({
     default: TaskStatus.ToDo,
-    enum: TaskStatus,
   })
-  status!: TaskStatus;
+  status!: string;
 
   @Column()
   @CreateDateColumn()
