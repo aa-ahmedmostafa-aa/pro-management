@@ -291,6 +291,66 @@ export const swaggerDocument = {
         },
       },
     },
+    "/api/v1/Users/count": {
+      get: {
+        tags: ["Users"],
+        summary: "Get users count by manager",
+        responses: {
+          "200": {
+            description: "ok",
+          },
+          "400": {
+            description: "bad request",
+          },
+          "401": {
+            description: "Un Authorized",
+          },
+          "403": {
+            description: "Forbidden",
+          },
+
+          "404": {
+            description: "Not Found",
+          },
+          "500": {
+            description: "internal server error",
+          },
+        },
+      },
+      put: {
+        tags: ["Users"],
+        summary: "toggle activated employee",
+        parameters: [
+          {
+            name: "id",
+            required: true,
+            in: "path",
+            type: "integer",
+          },
+        ],
+        responses: {
+          "200": {
+            description: "ok",
+          },
+          "400": {
+            description: "bad request",
+          },
+          "401": {
+            description: "Un Authorized",
+          },
+          "403": {
+            description: "Forbidden",
+          },
+
+          "404": {
+            description: "Not Found",
+          },
+          "500": {
+            description: "internal server error",
+          },
+        },
+      },
+    },
 
     "/api/v1/Users/verify": {
       put: {
@@ -946,6 +1006,45 @@ export const swaggerDocument = {
         },
       },
     },
+    "/api/v1/Task/manager": {
+      get: {
+        tags: ["Task"],
+        summary: "get all my Tasks for manager",
+        parameters: [
+          {
+            name: "status",
+            description: "values: ToDo, InProgress, Done",
+            in: "query",
+            schema: {
+              type: "string",
+              enum: ["ToDo", "InProgress", "Done"],
+            },
+          },
+        ],
+
+        responses: {
+          "200": {
+            description: "ok",
+          },
+          "400": {
+            description: "bad request",
+          },
+          "401": {
+            description: "Un Authorized",
+          },
+          "403": {
+            description: "Forbidden",
+          },
+
+          "404": {
+            description: "Not Found",
+          },
+          "500": {
+            description: "internal server error",
+          },
+        },
+      },
+    },
     "/api/v1/Task/{id}": {
       get: {
         tags: ["Task"],
@@ -1065,7 +1164,34 @@ export const swaggerDocument = {
         },
       },
     },
+    
+    "/api/v1/Task/count": {
+      get: {
+        tags: ["Task"],
+        summary: "count Tasks by manager",
+        responses: {
+          "200": {
+            description: "ok",
+          },
+          "400": {
+            description: "bad request",
+          },
+          "401": {
+            description: "Un Authorized",
+          },
+          "403": {
+            description: "Forbidden",
+          },
 
+          "404": {
+            description: "Not Found",
+          },
+          "500": {
+            description: "internal server error",
+          },
+        },
+      },
+    },
     "/api/v1/Task/{id}/change-status": {
       put: {
         tags: ["Task"],

@@ -71,10 +71,10 @@ export class TaskService {
     return await this.taskRepository.delete(id);
   }
 
-  async getMyTasks(adminId: number) {
+  async getMyTasks(managerId: number) {
     return await this.taskRepository.find({
       where: {
-        admin: { id: adminId },
+        manager: { id: managerId },
       },
       order: { creationDate: "DESC" },
     });
@@ -94,7 +94,7 @@ export class TaskService {
     });
   }
 
-  async getAllMyTasks(employeeId: number, status: string) {
+  async getAllMyTasksForEmployee(employeeId: number, status: string) {
     return await this.taskRepository.find({
       where: {
         status,
@@ -104,8 +104,27 @@ export class TaskService {
       },
       relations: {
         project: {
-          admin: true,
+          manager: true,
         },
+        employee: true,
+      },
+      order: { creationDate: "DESC" },
+    });
+  }
+
+
+  async getAllMyTasksForManager(managerId: number, status: string) {
+    return await this.taskRepository.find({
+      where: {
+        status,
+        project: {
+          manager: {
+            id: managerId,
+          },
+        },
+      },
+      relations: {
+        project: true,
       },
       order: { creationDate: "DESC" },
     });

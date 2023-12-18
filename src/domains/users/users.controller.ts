@@ -219,7 +219,7 @@ export class UsersController {
     }
   }
 
-  // used to create a user by the Admin of the system
+  // used to create a user by the manager of the system
   async createUser(req: Request, res: Response) {
     return await this.userCreationSequence(req, res, false);
   }
@@ -418,7 +418,7 @@ export class UsersController {
         return new ResponseHandlingService(
           res,
           new ErrorResponse(
-            `Cannot delete admin account`,
+            `Cannot delete manager account`,
             StatusCodes.BadRequest
           ),
           StatusCodes.BadRequest
@@ -832,6 +832,57 @@ export class UsersController {
       return new ResponseHandlingService(
         res,
         new ErrorResponse(error.any, StatusCodes.InternalServerError, error),
+        StatusCodes.InternalServerError
+      );
+    }
+  }
+
+  async getCountUsers(req: Request, res: Response) {
+    try {
+      const user = res.locals.user as IUser;
+
+      const manager = await this.usersService.getUsersCountByManagerId(
+        user.userId
+      );
+      // Extract tasks from projects and flatten the array
+      const tasks = manager.project.flatMap((project) => project.task);
+
+      // Extract unique employee IDs from all tasks
+      const allEmployeeIds = [
+        ...new Set(tasks.map((task) => task.employee.id)),
+      ];
+
+      // Count the number of all employees
+      const allEmployeeCount = allEmployeeIds.length;
+
+      // Filter tasks to include only those with activated employees
+      const activatedTasks = tasks.filter((task) => task.employee.isActivated);
+
+      // Extract unique activated employee IDs from filtered tasks
+      const activatedEmployeeIds = [
+        ...new Set(activatedTasks.map((task) => task.employee.id)),
+      ];
+
+      // Count the number of activated employees
+      const activatedEmployeeCount = activatedEmployeeIds.length;
+
+      // Calculate the number of deactivated employees
+      const deactivatedEmployeeCount =
+        allEmployeeCount - activatedEmployeeCount;
+
+      return new ResponseHandlingService(
+        res,
+        { activatedEmployeeCount, deactivatedEmployeeCount },
+        StatusCodes.OK
+      );
+    } catch (error: any) {
+      return new ResponseHandlingService(
+        res,
+        new ErrorResponse(
+          error.message,
+          StatusCodes.InternalServerError,
+          error
+        ),
         StatusCodes.InternalServerError
       );
     }

@@ -1,6 +1,6 @@
 export interface ProjectDto {
   title: string;
   description: string;
-  adminId: number;
+  managerId: number;
   projectId?: number;
 }

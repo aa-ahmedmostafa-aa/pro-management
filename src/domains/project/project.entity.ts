@@ -32,7 +32,7 @@ export class Project {
   @ManyToOne(() => User, (user) => user.project, {
     cascade: true,
   })
-  admin!: User;
+  manager!: User;
 
   @OneToMany(() => Task, (task) => task.project, {
     cascade: true,

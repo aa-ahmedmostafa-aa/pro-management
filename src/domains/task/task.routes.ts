@@ -19,6 +19,22 @@ class TaskRouter implements IRouterBase<TaskController> {
   }
 
   addRoutes(): void {
+    this.router.get(
+      "/count",
+      authenticationAndAuthorizationMiddleware([UserRoles.Manager.name]),
+      async (req: Request, res: Response) => {
+        this.controller.countTasks(req, res);
+      }
+    );
+    
+    this.router.get(
+      "/manager",
+      authenticationAndAuthorizationMiddleware([UserRoles.Manager.name]),
+      async (req: Request, res: Response) => {
+        this.controller.getAllMyTasksForManager(req, res);
+      }
+    );
+    
     this.router.post(
       "/",
       authenticationAndAuthorizationMiddleware([UserRoles.Manager.name]),
@@ -47,7 +63,7 @@ class TaskRouter implements IRouterBase<TaskController> {
       "/",
       authenticationAndAuthorizationMiddleware([UserRoles.Employee.name]),
       async (req: Request, res: Response) => {
-        this.controller.getAllMyTasks(req, res);
+        this.controller.getAllMyTasksForEmployee(req, res);
       }
     );
 

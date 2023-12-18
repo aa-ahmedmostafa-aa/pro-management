@@ -32,7 +32,7 @@ export class ProjectController {
       const projectDto: ProjectDto = {
         title: req.body.title,
         description: req.body.description,
-        adminId: user.userId,
+        managerId: user.userId,
       };
       const newProject = await this.projectService.createProject(projectDto);
       return new ResponseHandlingService(res, newProject, StatusCodes.Created);
@@ -105,7 +105,7 @@ export class ProjectController {
       const projectDto: ProjectDto = {
         title: req.body.title,
         description: req.body.description,
-        adminId: user.userId,
+        managerId: user.userId,
         projectId: parseInt(req.params.id),
       };
 

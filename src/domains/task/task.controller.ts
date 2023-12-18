@@ -7,6 +7,7 @@ import { IUser } from "../../shared/models/user.dto";
 import { TaskDto } from "./models/task.dto";
 import { TaskValidator } from "./task.validator";
 import { ProjectService } from "../project/project.service";
+import { TaskStatus } from "../../shared/enums/task-status";
 
 export class TaskController {
   private readonly taskService: TaskService;
@@ -104,11 +105,30 @@ export class TaskController {
     }
   }
 
-  async getAllMyTasks(req: Request, res: Response) {
+  async getAllMyTasksForEmployee(req: Request, res: Response) {
     try {
       const user = res.locals.user as IUser;
       const status = req.query.status as string;
-      const tasksInDb = await this.taskService.getAllMyTasks(
+      const tasksInDb = await this.taskService.getAllMyTasksForEmployee(
+        user.userId,
+        status
+      );
+      return new ResponseHandlingService(res, tasksInDb, StatusCodes.OK);
+    } catch (error: any) {
+      console.log(error);
+      return new ResponseHandlingService(
+        res,
+        new ErrorResponse(error.any, StatusCodes.InternalServerError, error),
+        StatusCodes.InternalServerError
+      );
+    }
+  }
+
+  async getAllMyTasksForManager(req: Request, res: Response) {
+    try {
+      const user = res.locals.user as IUser;
+      const status = req.query.status as string;
+      const tasksInDb = await this.taskService.getAllMyTasksForManager(
         user.userId,
         status
       );
@@ -203,6 +223,41 @@ export class TaskController {
 
       const result = await this.taskService.deleteTask(taskId);
       return new ResponseHandlingService(res, result, StatusCodes.OK);
+    } catch (error: any) {
+      return new ResponseHandlingService(
+        res,
+        new ErrorResponse(error.any, StatusCodes.InternalServerError, error),
+        StatusCodes.InternalServerError
+      );
+    }
+  }
+
+  async countTasks(req: Request, res: Response) {
+    try {
+      const user = res.locals.user as IUser;
+      const toDo = (
+        await this.taskService.getAllMyTasksForManager(
+          user.userId,
+          TaskStatus.ToDo
+        )
+      ).length;
+      const inProgress = (
+        await this.taskService.getAllMyTasksForManager(
+          user.userId,
+          TaskStatus.InProgress
+        )
+      ).length;
+      const done = (
+        await this.taskService.getAllMyTasksForManager(
+          user.userId,
+          TaskStatus.Done
+        )
+      ).length;
+      return new ResponseHandlingService(
+        res,
+        { toDo, inProgress, done },
+        StatusCodes.OK
+      );
     } catch (error: any) {
       return new ResponseHandlingService(
         res,

@@ -19,6 +19,14 @@ class UserRouter implements IRouterBase<UsersController> {
   }
 
   addRoutes(): void {
+    this.router.get(
+      "/count",
+      authenticationAndAuthorizationMiddleware([UserRoles.Manager.name]),
+      async (req: Request, res: Response) => {
+        this.controller.getCountUsers(req, res);
+      }
+    );
+    
     this.router.put("/verify", async (req: Request, res: Response) => {
       this.controller.verifyAccount(req, res);
     });
@@ -68,7 +76,7 @@ class UserRouter implements IRouterBase<UsersController> {
       }
     );
 
-    //  create ad admin from panel
+    //  create ad manager from panel
     this.router.post(
       "/Create",
       authenticationAndAuthorizationMiddleware([UserRoles.canAddUser.name]),

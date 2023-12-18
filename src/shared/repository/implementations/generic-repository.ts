@@ -29,6 +29,7 @@ export class GenericRepository<T> implements IGenericRepository<T> {
       skip: findOptions.skip,
       take: findOptions.take,
       order: findOptions.order,
+      select: findOptions.selectedColumns
     });
   }
 

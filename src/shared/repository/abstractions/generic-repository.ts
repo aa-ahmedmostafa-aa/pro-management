@@ -16,7 +16,7 @@ export interface IGenericRepository<T = any> {
 
   findOne(findOptions: IFindOptions): Promise<T>;
 
-  getCount(findOptions: IRelationFiltrationOptions): Promise<number>;
+  getCount(findOptions: IRelationFiltrationOptions):any;
 
   create(model: T): Promise<T>;
 

@@ -15,9 +15,9 @@ export class ProjectService {
     const project = new Project();
     project.title = projectDto.title;
     project.description = projectDto.description;
-    const admin = new User();
-    admin.id = projectDto.adminId;
-    project.admin = admin;
+    const manager = new User();
+    manager.id = projectDto.managerId;
+    project.manager = manager;
     return await this.projectRepository.create(project);
   }
 
@@ -34,7 +34,7 @@ export class ProjectService {
       where: { id },
       relations: {
         task: true,
-        admin: true,
+        manager: true,
       },
     });
   }
@@ -43,10 +43,10 @@ export class ProjectService {
     return await this.projectRepository.delete(id);
   }
 
-  async getMyProjects(adminId: number) {
+  async getMyProjects(managerId: number) {
     return await this.projectRepository.find({
       where: {
-        admin: { id: adminId },
+        manager: { id: managerId },
       },
       relations: {
         task: true,
@@ -57,6 +57,7 @@ export class ProjectService {
 
   async getAllProjects() {
     return await this.projectRepository.find({
+      relations: { manager: true },
       order: { creationDate: "DESC" },
     });
   }

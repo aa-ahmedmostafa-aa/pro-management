@@ -121,8 +121,8 @@ export class UsersService {
     return await this.usersRepository.delete(userId);
   }
 
-  async toggleActivateUser(userInDb : User) {
-    userInDb.isActivated = ! userInDb.isActivated;
+  async toggleActivateUser(userInDb: User) {
+    userInDb.isActivated = !userInDb.isActivated;
     return await this.usersRepository.update(userInDb);
   }
 
@@ -162,5 +162,13 @@ export class UsersService {
   async verifyUser(existingUser: User) {
     existingUser.isVerified = true;
     return await this.usersRepository.update(existingUser);
+  }
+
+  async getUsersCountByManagerId(managerId: number) {
+    // Find the manager by ID along with the associated projects and tasks
+    return await this.usersRepository.findOne({
+      where: { id: managerId },
+      relations: ["project", "project.task", "project.task.employee"],
+    });
   }
 }

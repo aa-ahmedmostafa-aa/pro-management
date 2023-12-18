@@ -56,10 +56,10 @@ export class User {
   })
   group!: UserGroup;
 
-  @OneToMany(() => Project, (project) => project.admin, {
+  @OneToMany(() => Project, (project) => project.manager, {
     onDelete: "CASCADE",
   })
-  project!: Project;
+  project!: Project[];
 
   @OneToMany(() => Task, (task) => task.employee, {
     onDelete: "CASCADE",
