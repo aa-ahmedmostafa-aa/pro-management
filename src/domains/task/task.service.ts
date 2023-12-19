@@ -112,7 +112,6 @@ export class TaskService {
     });
   }
 
-
   async getAllMyTasksForManager(managerId: number, status: string) {
     return await this.taskRepository.find({
       where: {
@@ -125,6 +124,7 @@ export class TaskService {
       },
       relations: {
         project: true,
+        employee: true,
       },
       order: { creationDate: "DESC" },
     });
