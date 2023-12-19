@@ -8,6 +8,7 @@ import { TaskDto } from "./models/task.dto";
 import { TaskValidator } from "./task.validator";
 import { ProjectService } from "../project/project.service";
 import { TaskStatus } from "../../shared/enums/task-status";
+import { UserGroups } from "../../shared/models/user-groups";
 
 export class TaskController {
   private readonly taskService: TaskService;
@@ -235,29 +236,19 @@ export class TaskController {
   async countTasks(req: Request, res: Response) {
     try {
       const user = res.locals.user as IUser;
-      const toDo = (
-        await this.taskService.getAllMyTasksForManager(
-          user.userId,
-          TaskStatus.ToDo
-        )
-      ).length;
-      const inProgress = (
-        await this.taskService.getAllMyTasksForManager(
-          user.userId,
-          TaskStatus.InProgress
-        )
-      ).length;
-      const done = (
-        await this.taskService.getAllMyTasksForManager(
-          user.userId,
-          TaskStatus.Done
-        )
-      ).length;
-      return new ResponseHandlingService(
-        res,
-        { toDo, inProgress, done },
-        StatusCodes.OK
-      );
+      if (user.userGroup == UserGroups.Manager.name) {
+        return new ResponseHandlingService(
+          res,
+          await this.countTasksForManager(user.userId),
+          StatusCodes.OK
+        );
+      } else {
+        return new ResponseHandlingService(
+          res,
+          await this.countTasksForEmployee(user.userId),
+          StatusCodes.OK
+        );
+      }
     } catch (error: any) {
       return new ResponseHandlingService(
         res,
@@ -265,5 +256,45 @@ export class TaskController {
         StatusCodes.InternalServerError
       );
     }
+  }
+
+  private async countTasksForManager(userId: number) {
+    const toDo = (
+      await this.taskService.getAllMyTasksForManager(userId, TaskStatus.ToDo)
+    ).length;
+    const inProgress = (
+      await this.taskService.getAllMyTasksForManager(
+        userId,
+        TaskStatus.InProgress
+      )
+    ).length;
+    const done = (
+      await this.taskService.getAllMyTasksForManager(userId, TaskStatus.Done)
+    ).length;
+    return {
+      toDo,
+      inProgress,
+      done,
+    };
+  }
+
+  private async countTasksForEmployee(userId: number) {
+    const toDo = (
+      await this.taskService.getAllMyTasksForEmployee(userId, TaskStatus.ToDo)
+    ).length;
+    const inProgress = (
+      await this.taskService.getAllMyTasksForEmployee(
+        userId,
+        TaskStatus.InProgress
+      )
+    ).length;
+    const done = (
+      await this.taskService.getAllMyTasksForEmployee(userId, TaskStatus.Done)
+    ).length;
+    return {
+      toDo,
+      inProgress,
+      done,
+    };
   }
 }

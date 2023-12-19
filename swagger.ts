@@ -1168,7 +1168,7 @@ export const swaggerDocument = {
     "/api/v1/Task/count": {
       get: {
         tags: ["Task"],
-        summary: "count Tasks by manager",
+        summary: "count Tasks for manager and employee",
         responses: {
           "200": {
             description: "ok",
