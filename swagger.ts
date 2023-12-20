@@ -472,7 +472,7 @@ export const swaggerDocument = {
             description: "One based input",
             schema: {
               type: "integer",
-              minimum: 0,
+              minimum: 1,
             },
           },
         ],
@@ -866,7 +866,79 @@ export const swaggerDocument = {
     "/api/v1/Project/manager": {
       get: {
         tags: ["Project"],
-        summary: "get my projects",
+        summary: "get my projects for manager",
+        parameters: [
+          {
+            name: "pageSize",
+            required: true,
+            in: "query",
+            description: "One based input",
+            schema: {
+              type: "integer",
+              minimum: 5,
+            },
+          },
+          {
+            name: "pageNumber",
+            required: true,
+            in: "query",
+            description: "One based input",
+            schema: {
+              type: "integer",
+              minimum: 1,
+            },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "ok",
+          },
+          "400": {
+            description: "bad request",
+          },
+          "401": {
+            description: "Un Authorized",
+          },
+          "403": {
+            description: "Forbidden",
+          },
+
+          "404": {
+            description: "Not Found",
+          },
+          "500": {
+            description: "internal server error",
+          },
+        },
+      },
+    },
+
+    "/api/v1/Project/employee": {
+      get: {
+        tags: ["Project"],
+        summary: "get my projects for employee",
+        parameters: [
+          {
+            name: "pageSize",
+            required: true,
+            in: "query",
+            description: "One based input",
+            schema: {
+              type: "integer",
+              minimum: 5,
+            },
+          },
+          {
+            name: "pageNumber",
+            required: true,
+            in: "query",
+            description: "One based input",
+            schema: {
+              type: "integer",
+              minimum: 1,
+            },
+          },
+        ],
         responses: {
           "200": {
             description: "ok",
@@ -895,6 +967,28 @@ export const swaggerDocument = {
       get: {
         tags: ["Project"],
         summary: "get all projects in system",
+        parameters: [
+          {
+            name: "pageSize",
+            required: true,
+            in: "query",
+            description: "One based input",
+            schema: {
+              type: "integer",
+              minimum: 5,
+            },
+          },
+          {
+            name: "pageNumber",
+            required: true,
+            in: "query",
+            description: "One based input",
+            schema: {
+              type: "integer",
+              minimum: 1,
+            },
+          },
+        ],
         responses: {
           "200": {
             description: "ok",
@@ -981,8 +1075,27 @@ export const swaggerDocument = {
               enum: ["ToDo", "InProgress", "Done"],
             },
           },
+          {
+            name: "pageSize",
+            required: true,
+            in: "query",
+            description: "One based input",
+            schema: {
+              type: "integer",
+              minimum: 5,
+            },
+          },
+          {
+            name: "pageNumber",
+            required: true,
+            in: "query",
+            description: "One based input",
+            schema: {
+              type: "integer",
+              minimum: 1,
+            },
+          },
         ],
-
         responses: {
           "200": {
             description: "ok",
@@ -1020,8 +1133,27 @@ export const swaggerDocument = {
               enum: ["ToDo", "InProgress", "Done"],
             },
           },
+          {
+            name: "pageSize",
+            required: true,
+            in: "query",
+            description: "One based input",
+            schema: {
+              type: "integer",
+              minimum: 5,
+            },
+          },
+          {
+            name: "pageNumber",
+            required: true,
+            in: "query",
+            description: "One based input",
+            schema: {
+              type: "integer",
+              minimum: 1,
+            },
+          },
         ],
-
         responses: {
           "200": {
             description: "ok",
@@ -1045,6 +1177,7 @@ export const swaggerDocument = {
         },
       },
     },
+
     "/api/v1/Task/{id}": {
       get: {
         tags: ["Task"],
@@ -1164,7 +1297,7 @@ export const swaggerDocument = {
         },
       },
     },
-    
+
     "/api/v1/Task/count": {
       get: {
         tags: ["Task"],
@@ -1251,6 +1384,26 @@ export const swaggerDocument = {
             required: true,
             in: "path",
             type: "integer",
+          },
+          {
+            name: "pageSize",
+            required: true,
+            in: "query",
+            description: "One based input",
+            schema: {
+              type: "integer",
+              minimum: 5,
+            },
+          },
+          {
+            name: "pageNumber",
+            required: true,
+            in: "query",
+            description: "One based input",
+            schema: {
+              type: "integer",
+              minimum: 1,
+            },
           },
         ],
         responses: {

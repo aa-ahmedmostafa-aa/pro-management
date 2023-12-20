@@ -23,7 +23,15 @@ class ProjectRouter implements IRouterBase<ProjectController> {
       "/manager",
       authenticationAndAuthorizationMiddleware([UserRoles.Manager.name]),
       async (req: Request, res: Response) => {
-        this.controller.getMyProjects(req, res);
+        this.controller.getMyProjectsForManager(req, res);
+      }
+    );
+
+    this.router.get(
+      "/employee",
+      authenticationAndAuthorizationMiddleware([UserRoles.Employee.name]),
+      async (req: Request, res: Response) => {
+        this.controller.getMyProjectsForEmployee(req, res);
       }
     );
     

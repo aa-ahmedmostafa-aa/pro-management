@@ -6,6 +6,8 @@ import { ProjectService } from "./project.service";
 import { ProjectValidator } from "./project.validator";
 import { ProjectDto } from "./models/project.dto";
 import { IUser } from "../../shared/models/user.dto";
+import { IPaginatedRequest } from "../../shared/models/paginated-request";
+import { PaginationUtils } from "../../shared/services/pagination-utils.service";
 
 export class ProjectController {
   private readonly projectService: ProjectService;
@@ -60,11 +62,61 @@ export class ProjectController {
     }
   }
 
-  async getMyProjects(req: Request, res: Response) {
+  async getMyProjectsForManager(req: Request, res: Response) {
     try {
       const user = res.locals.user as IUser;
-      const projectsInDb = await this.projectService.getMyProjects(user.userId);
-      return new ResponseHandlingService(res, projectsInDb, StatusCodes.OK);
+      const paginatedRequestMeta: IPaginatedRequest =
+        PaginationUtils.getPaginationRequirementsFromRequest(req);
+      const requestDetails = {
+        pageNumber: paginatedRequestMeta.pageNumber,
+        pageSize: paginatedRequestMeta.pageSize,
+        managerId: user.userId,
+      };
+      const projectsInDb = await this.projectService.getMyProjectsForManager(
+        requestDetails
+      );
+      return new ResponseHandlingService(
+        res,
+        PaginationUtils.getPaginatedResponse(
+          paginatedRequestMeta.pageNumber,
+          paginatedRequestMeta.pageSize,
+          projectsInDb[0],
+          projectsInDb[1]
+        ),
+        StatusCodes.OK
+      );
+    } catch (error: any) {
+      return new ResponseHandlingService(
+        res,
+        new ErrorResponse(error.any, StatusCodes.InternalServerError, error),
+        StatusCodes.InternalServerError
+      );
+    }
+  }
+
+  async getMyProjectsForEmployee(req: Request, res: Response) {
+    try {
+      const user = res.locals.user as IUser;
+      const paginatedRequestMeta: IPaginatedRequest =
+        PaginationUtils.getPaginationRequirementsFromRequest(req);
+      const requestDetails = {
+        pageNumber: paginatedRequestMeta.pageNumber,
+        pageSize: paginatedRequestMeta.pageSize,
+        employeeId: user.userId,
+      };
+      const projectsInDb = await this.projectService.getMyProjectsForEmployee(
+        requestDetails
+      );
+      return new ResponseHandlingService(
+        res,
+        PaginationUtils.getPaginatedResponse(
+          paginatedRequestMeta.pageNumber,
+          paginatedRequestMeta.pageSize,
+          projectsInDb[0],
+          projectsInDb[1]
+        ),
+        StatusCodes.OK
+      );
     } catch (error: any) {
       return new ResponseHandlingService(
         res,
@@ -76,8 +128,21 @@ export class ProjectController {
 
   async getAllProjects(req: Request, res: Response) {
     try {
-      const projectsInDb = await this.projectService.getAllProjects();
-      return new ResponseHandlingService(res, projectsInDb, StatusCodes.OK);
+      const paginatedRequestMeta: IPaginatedRequest =
+        PaginationUtils.getPaginationRequirementsFromRequest(req);
+      const projectsInDb = await this.projectService.getAllProjects(
+        paginatedRequestMeta
+      );
+      return new ResponseHandlingService(
+        res,
+        PaginationUtils.getPaginatedResponse(
+          paginatedRequestMeta.pageNumber,
+          paginatedRequestMeta.pageSize,
+          projectsInDb[0],
+          projectsInDb[1]
+        ),
+        StatusCodes.OK
+      );
     } catch (error: any) {
       return new ResponseHandlingService(
         res,

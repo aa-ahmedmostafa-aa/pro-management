@@ -1,3 +1,5 @@
+import { IPaginatedRequest } from "../../shared/models/paginated-request";
+import { IRelationFiltrationOptions } from "../../shared/models/relation-filtration-options";
 import { IGenericRepository } from "../../shared/repository/abstractions/generic-repository";
 import { GenericRepository } from "../../shared/repository/implementations/generic-repository";
 import { User } from "../users/entities/user.entity";
@@ -43,22 +45,53 @@ export class ProjectService {
     return await this.projectRepository.delete(id);
   }
 
-  async getMyProjects(managerId: number) {
-    return await this.projectRepository.find({
+  async getMyProjectsForManager(requestDetails: any) {
+    const limit = requestDetails.pageSize;
+    const skipBy = (requestDetails.pageNumber - 1) * limit;
+    const findOptions: IRelationFiltrationOptions = {
       where: {
-        manager: { id: managerId },
+        manager: { id: requestDetails.managerId },
       },
-      relations: {
-        task: true,
-      },
-      order: { creationDate: "DESC" },
-    });
+      skip: skipBy,
+      take: limit,
+      orderBy: { "project.creationDate": "DESC" },
+      queryBuilderCreationPropertyName: "project",
+      tableRelationsAndSelect: [
+        { navigationPropertyName: "project.task", selector: "task" },
+      ],
+    };
+    return await this.projectRepository.findQueryBuilderAndCount(findOptions);
   }
 
-  async getAllProjects() {
-    return await this.projectRepository.find({
-      relations: { manager: true },
-      order: { creationDate: "DESC" },
-    });
+  async getMyProjectsForEmployee(requestDetails: any) {
+    const limit = requestDetails.pageSize;
+    const skipBy = (requestDetails.pageNumber - 1) * limit;
+    const findOptions: IRelationFiltrationOptions = {
+      skip: skipBy,
+      take: limit,
+      orderBy: { "project.creationDate": "DESC" },
+      tableRelationsAndSelect: [
+        { navigationPropertyName: "project.task", selector: "task" },
+        { navigationPropertyName: "task.employee", selector: "employee" },
+      ],
+      relationFiltration:[`employee.id = ${requestDetails.employeeId}`],
+      queryBuilderCreationPropertyName: "project",
+    };
+    return await this.projectRepository.findQueryBuilderAndCount(findOptions);
+  }
+
+  async getAllProjects(requestDetails: IPaginatedRequest) {
+    const limit = requestDetails.pageSize;
+    const skipBy = (requestDetails.pageNumber - 1) * limit;
+    const findOptions: IRelationFiltrationOptions = {
+      skip: skipBy,
+      take: limit,
+      tableRelationsAndSelect: [
+        { navigationPropertyName: "project.manager", selector: "manager" },
+      ],
+      orderBy: { "project.creationDate": "DESC" },
+      queryBuilderCreationPropertyName: "project",
+    };
+    return await this.projectRepository.findQueryBuilderAndCount(findOptions);
   }
 }

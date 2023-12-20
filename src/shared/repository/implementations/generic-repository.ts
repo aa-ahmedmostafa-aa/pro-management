@@ -29,7 +29,7 @@ export class GenericRepository<T> implements IGenericRepository<T> {
       skip: findOptions.skip,
       take: findOptions.take,
       order: findOptions.order,
-      select: findOptions.selectedColumns
+      select: findOptions.selectedColumns,
     });
   }
 
@@ -44,12 +44,13 @@ export class GenericRepository<T> implements IGenericRepository<T> {
       findOptions.queryBuilderCreationPropertyName
     );
 
-    findOptions.tableRelations.forEach((element) => {
-      query = query.leftJoinAndSelect(
-        element.navigationPropertyName,
-        element.selector
-      );
-    });
+    if (findOptions.tableRelations)
+      findOptions.tableRelations.forEach((element) => {
+        query = query.leftJoinAndSelect(
+          element.navigationPropertyName,
+          element.selector
+        );
+      });
 
     if (findOptions.where) query = query.where(findOptions.where);
 
@@ -69,12 +70,21 @@ export class GenericRepository<T> implements IGenericRepository<T> {
       findOptions.queryBuilderCreationPropertyName
     );
 
-    findOptions.tableRelations.forEach((element) => {
-      query = query.leftJoinAndSelect(
-        element.navigationPropertyName,
-        element.selector
-      );
-    });
+    if (findOptions.tableRelations)
+      findOptions.tableRelations.forEach((element) => {
+        query = query.leftJoin(
+          element.navigationPropertyName,
+          element.selector
+        );
+      });
+
+    if (findOptions.tableRelationsAndSelect)
+      findOptions.tableRelationsAndSelect.forEach((element) => {
+        query = query.leftJoinAndSelect(
+          element.navigationPropertyName,
+          element.selector
+        );
+      });
 
     if (findOptions.where) query = query.where(findOptions.where);
 
@@ -95,12 +105,13 @@ export class GenericRepository<T> implements IGenericRepository<T> {
       findOptions.queryBuilderCreationPropertyName
     );
 
-    findOptions.tableRelations.forEach((element) => {
-      query = query.leftJoinAndSelect(
-        element.navigationPropertyName,
-        element.selector
-      );
-    });
+    if (findOptions.tableRelations)
+      findOptions.tableRelations.forEach((element) => {
+        query = query.leftJoinAndSelect(
+          element.navigationPropertyName,
+          element.selector
+        );
+      });
 
     if (findOptions.where) query = query.where(findOptions.where);
 

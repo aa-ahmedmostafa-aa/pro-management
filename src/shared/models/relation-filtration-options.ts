@@ -3,7 +3,8 @@ import { IRelationProperties } from "./relation";
 
 export interface IRelationFiltrationOptions extends IFindPaginatedOptions {
     queryBuilderCreationPropertyName: string;
-    tableRelations: IRelationProperties[];
+    tableRelations?: IRelationProperties[];
+    tableRelationsAndSelect?: IRelationProperties[];
     relationFiltration?: string[];
     orderBy?: {}
 }

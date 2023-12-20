@@ -1,4 +1,5 @@
 import { TaskStatus } from "../../shared/enums/task-status";
+import { IRelationFiltrationOptions } from "../../shared/models/relation-filtration-options";
 import { IGenericRepository } from "../../shared/repository/abstractions/generic-repository";
 import { GenericRepository } from "../../shared/repository/implementations/generic-repository";
 import { Project } from "../project/project.entity";
@@ -80,21 +81,47 @@ export class TaskService {
     });
   }
 
-  async getAllTasksForProject(projectId: number) {
-    return await this.taskRepository.find({
+  async getAllTasksForProject(requestDetails: any) {
+    const limit = requestDetails.pageSize;
+    const skipBy = (requestDetails.pageNumber - 1) * limit;
+    const findOptions: IRelationFiltrationOptions = {
+      skip: skipBy,
+      take: limit,
       where: {
         project: {
-          id: projectId,
+          id: requestDetails.projectId,
         },
       },
-      relations: {
-        employee: true,
-      },
-      order: { creationDate: "DESC" },
-    });
+      tableRelationsAndSelect: [
+        { navigationPropertyName: "task.employee", selector: "employee" },
+      ],
+      orderBy: { "task.creationDate": "DESC" },
+      queryBuilderCreationPropertyName: "task",
+    };
+    return await this.taskRepository.findQueryBuilderAndCount(findOptions);
   }
 
-  async getAllMyTasksForEmployee(employeeId: number, status: string) {
+  async getAllMyTasksForEmployee(requestDetails: any) {
+    const limit = requestDetails.pageSize;
+    const skipBy = (requestDetails.pageNumber - 1) * limit;
+    const findOptions: IRelationFiltrationOptions = {
+      skip: skipBy,
+      take: limit,
+      where: {
+        ...(requestDetails.status && { status: requestDetails.status }),
+      },
+      tableRelationsAndSelect: [
+        { navigationPropertyName: "task.project", selector: "project" },
+        { navigationPropertyName: "task.employee", selector: "employee" },
+      ],
+      relationFiltration:[`employee.id = ${requestDetails.employeeId}`],
+      orderBy: { "task.creationDate": "DESC" },
+      queryBuilderCreationPropertyName: "task",
+    };
+    return await this.taskRepository.findQueryBuilderAndCount(findOptions);
+  }
+
+  async getAllCountMyTasksForEmployee(employeeId: number, status: string) {
     return await this.taskRepository.find({
       where: {
         status,
@@ -112,7 +139,28 @@ export class TaskService {
     });
   }
 
-  async getAllMyTasksForManager(managerId: number, status: string) {
+  async getAllMyTasksForManager(requestDetails: any) {
+    const limit = requestDetails.pageSize;
+    const skipBy = (requestDetails.pageNumber - 1) * limit;
+    const findOptions: IRelationFiltrationOptions = {
+      skip: skipBy,
+      take: limit,
+      where: {
+        ...(requestDetails.status && { status: requestDetails.status }),
+      },
+      tableRelationsAndSelect: [
+        { navigationPropertyName: "task.project", selector: "project" },
+        { navigationPropertyName: "task.employee", selector: "employee" },
+        { navigationPropertyName: "project.manager", selector: "manager" },
+      ],
+      relationFiltration: [`manager.id = ${requestDetails.managerId}`],
+      orderBy: { "task.creationDate": "DESC" },
+      queryBuilderCreationPropertyName: "task",
+    };
+    return await this.taskRepository.findQueryBuilderAndCount(findOptions);
+  }
+
+  async getAllCountMyTasksForManager(managerId: number, status: string) {
     return await this.taskRepository.find({
       where: {
         status,

@@ -9,6 +9,8 @@ import { TaskValidator } from "./task.validator";
 import { ProjectService } from "../project/project.service";
 import { TaskStatus } from "../../shared/enums/task-status";
 import { UserGroups } from "../../shared/models/user-groups";
+import { IPaginatedRequest } from "../../shared/models/paginated-request";
+import { PaginationUtils } from "../../shared/services/pagination-utils.service";
 
 export class TaskController {
   private readonly taskService: TaskService;
@@ -81,8 +83,8 @@ export class TaskController {
   async getMyTasks(req: Request, res: Response) {
     try {
       const user = res.locals.user as IUser;
-      const TasksInDb = await this.taskService.getMyTasks(user.userId);
-      return new ResponseHandlingService(res, TasksInDb, StatusCodes.OK);
+      const tasksInDb = await this.taskService.getMyTasks(user.userId);
+      return new ResponseHandlingService(res, tasksInDb, StatusCodes.OK);
     } catch (error: any) {
       return new ResponseHandlingService(
         res,
@@ -94,9 +96,27 @@ export class TaskController {
 
   async getAllTasksForProject(req: Request, res: Response) {
     try {
+      const paginatedRequestMeta: IPaginatedRequest =
+        PaginationUtils.getPaginationRequirementsFromRequest(req);
       const projectId = parseInt(req.params.id);
-      const tasksInDb = await this.taskService.getAllTasksForProject(projectId);
-      return new ResponseHandlingService(res, tasksInDb, StatusCodes.OK);
+      const requestDetails = {
+        pageNumber: paginatedRequestMeta.pageNumber,
+        pageSize: paginatedRequestMeta.pageSize,
+        projectId,
+      };
+      const tasksInDb = await this.taskService.getAllTasksForProject(
+        requestDetails
+      );
+      return new ResponseHandlingService(
+        res,
+        PaginationUtils.getPaginatedResponse(
+          paginatedRequestMeta.pageNumber,
+          paginatedRequestMeta.pageSize,
+          tasksInDb[0],
+          tasksInDb[1]
+        ),
+        StatusCodes.OK
+      );
     } catch (error: any) {
       return new ResponseHandlingService(
         res,
@@ -108,15 +128,30 @@ export class TaskController {
 
   async getAllMyTasksForEmployee(req: Request, res: Response) {
     try {
+      const paginatedRequestMeta: IPaginatedRequest =
+        PaginationUtils.getPaginationRequirementsFromRequest(req);
       const user = res.locals.user as IUser;
       const status = req.query.status as string;
+      const requestDetails = {
+        pageNumber: paginatedRequestMeta.pageNumber,
+        pageSize: paginatedRequestMeta.pageSize,
+        employeeId: user.userId,
+        status,
+      };
       const tasksInDb = await this.taskService.getAllMyTasksForEmployee(
-        user.userId,
-        status
+        requestDetails
       );
-      return new ResponseHandlingService(res, tasksInDb, StatusCodes.OK);
+      return new ResponseHandlingService(
+        res,
+        PaginationUtils.getPaginatedResponse(
+          paginatedRequestMeta.pageNumber,
+          paginatedRequestMeta.pageSize,
+          tasksInDb[0],
+          tasksInDb[1]
+        ),
+        StatusCodes.OK
+      );
     } catch (error: any) {
-      console.log(error);
       return new ResponseHandlingService(
         res,
         new ErrorResponse(error.any, StatusCodes.InternalServerError, error),
@@ -127,13 +162,29 @@ export class TaskController {
 
   async getAllMyTasksForManager(req: Request, res: Response) {
     try {
+      const paginatedRequestMeta: IPaginatedRequest =
+        PaginationUtils.getPaginationRequirementsFromRequest(req);
       const user = res.locals.user as IUser;
       const status = req.query.status as string;
+      const requestDetails = {
+        pageNumber: paginatedRequestMeta.pageNumber,
+        pageSize: paginatedRequestMeta.pageSize,
+        managerId: user.userId,
+        status,
+      };
       const tasksInDb = await this.taskService.getAllMyTasksForManager(
-        user.userId,
-        status
+        requestDetails
       );
-      return new ResponseHandlingService(res, tasksInDb, StatusCodes.OK);
+      return new ResponseHandlingService(
+        res,
+        PaginationUtils.getPaginatedResponse(
+          paginatedRequestMeta.pageNumber,
+          paginatedRequestMeta.pageSize,
+          tasksInDb[0],
+          tasksInDb[1]
+        ),
+        StatusCodes.OK
+      );
     } catch (error: any) {
       return new ResponseHandlingService(
         res,
@@ -260,16 +311,22 @@ export class TaskController {
 
   private async countTasksForManager(userId: number) {
     const toDo = (
-      await this.taskService.getAllMyTasksForManager(userId, TaskStatus.ToDo)
+      await this.taskService.getAllCountMyTasksForManager(
+        userId,
+        TaskStatus.ToDo
+      )
     ).length;
     const inProgress = (
-      await this.taskService.getAllMyTasksForManager(
+      await this.taskService.getAllCountMyTasksForManager(
         userId,
         TaskStatus.InProgress
       )
     ).length;
     const done = (
-      await this.taskService.getAllMyTasksForManager(userId, TaskStatus.Done)
+      await this.taskService.getAllCountMyTasksForManager(
+        userId,
+        TaskStatus.Done
+      )
     ).length;
     return {
       toDo,
@@ -280,16 +337,22 @@ export class TaskController {
 
   private async countTasksForEmployee(userId: number) {
     const toDo = (
-      await this.taskService.getAllMyTasksForEmployee(userId, TaskStatus.ToDo)
+      await this.taskService.getAllCountMyTasksForEmployee(
+        userId,
+        TaskStatus.ToDo
+      )
     ).length;
     const inProgress = (
-      await this.taskService.getAllMyTasksForEmployee(
+      await this.taskService.getAllCountMyTasksForEmployee(
         userId,
         TaskStatus.InProgress
       )
     ).length;
     const done = (
-      await this.taskService.getAllMyTasksForEmployee(userId, TaskStatus.Done)
+      await this.taskService.getAllCountMyTasksForEmployee(
+        userId,
+        TaskStatus.Done
+      )
     ).length;
     return {
       toDo,

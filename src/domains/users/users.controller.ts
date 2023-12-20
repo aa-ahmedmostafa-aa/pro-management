@@ -98,6 +98,17 @@ export class UsersController {
         );
       }
 
+      if (!userInDb.isActivated) {
+        return new ResponseHandlingService(
+          res,
+          new ErrorResponse(
+            `Sorry, You account Deactivated now, please contact us.`,
+            StatusCodes.UnAuthorized
+          ),
+          StatusCodes.UnAuthorized
+        );
+      }
+
       const userGroupForTheGivenUser = await this.userGroupsService.getGroup(
         userInDb.group.id
       );
